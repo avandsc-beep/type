@@ -19,10 +19,6 @@ const fonts = [
   { id:'012', name:'TRAMAPUNTO', file:'/fonts/TRAMAPUNTO.ttf', family:'TramaPunto', type:'Experimental', year:'2026', note:'Tipografía construida desde trama y punto.', open:true },
 ]
 
-const modes = [
-  ['tilt','INCLINAR'], ['stroke','TRAZO'], ['scale','TAMAÑO'], ['positive','POSITIVO'], ['negative','NEGATIVO']
-]
-
 function Cursor(){
   const [pos,setPos]=useState({x:-100,y:-100}); const [label,setLabel]=useState(''); const [active,setActive]=useState(false)
   const target=useRef({x:-100,y:-100}); const current=useRef({x:-100,y:-100})
@@ -42,15 +38,6 @@ function TouchDot(){
   return <div className={'touch-dot '+(visible?'is-visible':'')} style={{left:pos.x,top:pos.y}} aria-hidden="true"/>
 }
 
-function FitText({font,text,size,tracking,leading,className=''}){
-  const ref=useRef(null)
-  useEffect(()=>{
-    const el=ref.current;if(!el)return
-    const fit=()=>{el.style.setProperty('--fit-scale','1');const box=el.parentElement?.clientWidth||1;const natural=el.scrollWidth||1;el.style.setProperty('--fit-scale',Math.min(1,box/natural).toFixed(4))}
-    const ro=new ResizeObserver(fit); if(el.parentElement)ro.observe(el.parentElement); document.fonts?.ready.then(fit); fit(); return()=>ro.disconnect()
-  },[font,size,tracking,text])
-  return <div ref={ref} className={'fit-text '+className} style={{fontFamily:font.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>{text}</div>
-}
 
 function downloadFont(font){fetch('/api/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({font:font.name}),keepalive:true}).catch(()=>{})}
 
@@ -60,11 +47,25 @@ function DownloadCount({font}){
   return <span className="download-count">{count===null?'—':count} DESCARGAS</span>
 }
 
-function FontCard({font,index,onExperiment,mode}){
+function LetterSpecimen({font,text,size,tracking,leading,className=''}){
+  const [effects,setEffects]=useState({})
+  const chars=[...text]
+  const choices=['tilt','stroke','scale','positive','negative']
+  const activate=(index)=>{
+    const effect=choices[Math.floor(Math.random()*choices.length)]
+    setEffects(prev=>({...prev,[index]:effect}))
+  }
+  const clear=(index)=>setEffects(prev=>{const next={...prev};delete next[index];return next})
+  return <div className={'letter-specimen '+className} style={{fontFamily:font.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>
+    {chars.map((char,i)=><span key={i} className={'letter '+(effects[i]||'')} onMouseEnter={()=>activate(i)} onMouseLeave={()=>clear(i)}>{char===' '?'\u00A0':char}</span>)}
+  </div>
+}
+
+function FontCard({font,index,onExperiment}){
   const [size,setSize]=useState(index===0?145:105); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86); const [text,setText]=useState(font.name)
-  return <article className={'font-card '+(index===0?'is-primary ':'')+'mode-'+mode} onClick={()=>onExperiment(font)} data-cursor="ABRIR">
+  return <article className={'font-card '+(index===0?'is-primary ':'')} onClick={()=>onExperiment(font)} data-cursor="ABRIR">
     <div className="card-top"><span><b>{font.id}</b> / {font.name}</span><span>{font.type}</span></div>
-    <div className="specimen-frame"><FitText font={font} text={text} size={size} tracking={tracking} leading={leading}/><span className="specimen-mark">AVAND TYPE</span></div>
+    <div className="specimen-frame"><LetterSpecimen font={font} text={text} size={size} tracking={tracking} leading={leading}/><span className="specimen-mark">PASA SOBRE LAS LETRAS</span></div>
     <div className="card-controls" onClick={e=>e.stopPropagation()}>
       <label>TAMAÑO <input type="range" min="32" max="220" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label>
       <label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label>
@@ -75,16 +76,15 @@ function FontCard({font,index,onExperiment,mode}){
 }
 
 export default function Home(){
-  const [mode,setMode]=useState('tilt'); const [text,setText]=useState('TIPOGRAFÍA'); const [size,setSize]=useState(150); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86); const [selected,setSelected]=useState(fonts[0])
+  const [text,setText]=useState('TIPOGRAFÍA'); const [size,setSize]=useState(150); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86); const [selected,setSelected]=useState(fonts[0])
   const choose=f=>{setSelected(f);setText(f.name);document.querySelector('#experiment')?.scrollIntoView({behavior:'smooth'})}
   return <main>
     <Cursor/><TouchDot/>
     <header className="nav"><a className="brand" href="#archive" data-cursor="ARCHIVO">AVAND / TYPE</a><nav><a href="#archive" data-cursor="VER">ARCHIVO</a><a href="#experiment" data-cursor="PROBAR">EXPERIMENTAR</a><a href="#academy" data-cursor="ACADEMIA">ACADEMIA</a><a href="#about" data-cursor="AVAND">AVAND</a></nav><span className="open-tag">USO ABIERTO</span></header>
     <section id="archive" className="archive">
       <div className="section-head"><span>ARCHIVO TIPOGRÁFICO</span><span>{fonts.length+1} TIPOGRAFÍAS</span></div>
-      <div className="archive-intro"><div className="archive-title"><span>AVAND / TYPE</span><strong>LETRAS<br/>PARA<br/>USAR.</strong></div><div className="archive-manifest"><span>01 — ARCHIVO</span><p>Tipografías de AVAND. Abiertas para experimentar, utilizar y transformar.</p><small>ELIGE UNA INTERACCIÓN Y PASA SOBRE LAS LETRAS.</small></div></div>
-      <div className="motion-tools"><span>INTERACCIÓN / <b>{modes.find(m=>m[0]===mode)?.[1]}</b></span>{modes.map(([id,label])=><button key={id} className={mode===id?'selected':''} onClick={()=>setMode(id)} data-cursor={label}>{label}</button>)}</div>
-      <div className="font-list">{fonts.map((f,i)=><FontCard key={f.id} font={f} index={i} mode={mode} onExperiment={choose}/>)}</div>
+      <div className="archive-intro"><div className="archive-title"><span>AVAND / TYPE</span><strong>LETRAS<br/>PARA<br/>USAR.</strong></div><div className="archive-manifest"><span>01 — ARCHIVO</span><p>Tipografías de AVAND. Abiertas para experimentar, utilizar y transformar.</p><small>PASA EL CURSOR SOBRE LAS LETRAS.</small></div></div>
+      <div className="font-list">{fonts.map((f,i)=><FontCard key={f.id} font={f} index={i} onExperiment={choose}/>)}</div>
       <article className="font-card paid-card" data-cursor="MYFONTS"><div className="card-top"><span><b>013</b> / CRUZ SANTA</span><span>LICENCIA COMERCIAL</span></div><div className="specimen-frame paid-specimen"><div className="paid-preview">CRUZ SANTA</div></div><div className="paid-info"><div><strong>CRUZ SANTA</strong><span>por AVAND · 1 estilo · desde US$ 5</span></div><a href={myFontsUrl} target="_blank" rel="noreferrer" data-cursor="MYFONTS">MYFONTS ↗</a></div></article>
     </section>
     <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="experiment-top"><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-hint">ESCRIBE / ARRASTRA / PRUEBA</div></div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="240" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-30" max="40" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".5" max="1.5" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download onClick={()=>downloadFont(selected)} data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
