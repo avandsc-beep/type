@@ -48,16 +48,21 @@ function DownloadCount({font}){
 }
 
 function LetterSpecimen({font,text,size,tracking,leading,className=''}){
-  const [effects,setEffects]=useState({})
-  const chars=[...text]
+  const [activeLetter,setActiveLetter]=useState(null)
+  const [effect,setEffect]=useState(null)
   const choices=['tilt','stroke','scale','positive','negative']
-  const activate=(index)=>{
-    const effect=choices[Math.floor(Math.random()*choices.length)]
-    setEffects(prev=>({...prev,[index]:effect}))
+  const enter=(index)=>{
+    setActiveLetter(index)
+    setEffect(choices[Math.floor(Math.random()*choices.length)])
   }
-  const clear=(index)=>setEffects(prev=>{const next={...prev};delete next[index];return next})
+  const leave=(index)=>{
+    setActiveLetter(current=>current===index?null:current)
+  }
   return <div className={'letter-specimen '+className} style={{fontFamily:font.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>
-    {chars.map((char,i)=><span key={i} className={'letter '+(effects[i]||'')} onMouseEnter={()=>activate(i)} onMouseLeave={()=>clear(i)}>{char===' '?'\u00A0':char}</span>)}
+    {[...text].map((char,i)=>{
+      const active=activeLetter===i && char!==' '
+      return <span key={i} className={'letter '+(active?effect||'':'')} onPointerEnter={()=>enter(i)} onPointerLeave={()=>leave(i)} data-letter-index={i}>{char===' '?'\u00A0':char}</span>
+    })}
   </div>
 }
 
@@ -87,7 +92,7 @@ export default function Home(){
       <div className="font-list">{fonts.map((f,i)=><FontCard key={f.id} font={f} index={i} onExperiment={choose}/>)}</div>
       <article className="font-card paid-card" data-cursor="MYFONTS"><div className="card-top"><span><b>013</b> / CRUZ SANTA</span><span>LICENCIA COMERCIAL</span></div><div className="specimen-frame paid-specimen"><LetterSpecimen font={{family:'CruzSanta'}} text="CRUZ SANTA" size={120} tracking={-3} leading={.8} className="paid-letter-specimen"/></div><div className="paid-info"><div><strong>CRUZ SANTA</strong><span>por AVAND · 1 estilo · desde US$ 5</span></div><a href={myFontsUrl} target="_blank" rel="noreferrer" data-cursor="MYFONTS">MYFONTS ↗</a></div></article>
     </section>
-    <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="experiment-top"><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-hint">ESCRIBE / ARRASTRA / PRUEBA</div></div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="240" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-30" max="40" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".5" max="1.5" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download onClick={()=>downloadFont(selected)} data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
+    <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="experiment-top"><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-hint">ESCRIBE / ARRASTRA / PRUEBA</div></div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="220" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download onClick={()=>downloadFont(selected)} data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
     <section id="academy" className="academy"><div className="section-head"><span>ACADEMIA</span><span>EXPLORANDO LETRAS</span></div><div className="academy-grid"><h2>APRENDER<br/>TAMBIÉN<br/>ES HACER.</h2><div><p>Un espacio de exploración tipográfica para estudiantes y diseñadores. Ejercicios, experimentos y herramientas para comprender las letras haciéndolas.</p><a className="academy-link" href="https://explorando-letras.vercel.app/" target="_blank" rel="noreferrer" data-cursor="EXPLORAR">EXPLORAR ACADEMIA ↗</a></div></div></section>
     <section id="about" className="about"><span>AVAND</span><div><h3>TIPOGRAFÍA<br/>COMO<br/>MATERIA.</h3><p>AVAND / TYPE reúne investigaciones, alfabetos y tipografías desarrolladas desde la práctica del diseño. Un archivo abierto para probarlas, usarlas y llevarlas más lejos.</p></div><span>info@avand-design.com</span></section>
     <footer className="footer"><span>© AVAND / TYPE</span><div><a href="#archive">ARCHIVO</a><a href="#experiment">EXPERIMENTA</a><a href="#about">CONTACTO</a></div></footer>
