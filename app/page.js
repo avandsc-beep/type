@@ -67,12 +67,12 @@ function FontCard({font,index,onExperiment}){
   const [size,setSize]=useState(index===0?145:105); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86); const [text,setText]=useState(font.name)
   return <article className={'font-card '+(index===0?'is-primary ':'')} onClick={()=>onExperiment(font)} data-cursor="ABRIR">
     <div className="card-top"><span><b>{font.id}</b> / {font.name}</span><span>{font.type}</span></div>
-    <div className="specimen-frame"><LetterSpecimen font={font} text={text} size={size} tracking={tracking} leading={leading}/><span className="specimen-mark">PASA SOBRE LAS LETRAS</span></div>
     <div className="card-controls" onClick={e=>e.stopPropagation()}>
       <label>TAMAÑO <input type="range" min="32" max="220" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label>
       <label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label>
       <label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label>
     </div>
+    <div className="specimen-frame"><LetterSpecimen font={font} text={text} size={size} tracking={tracking} leading={leading}/><span className="specimen-mark">PASA SOBRE LA LÍNEA</span></div>
     <div className="card-bottom"><span>{font.year} · {font.open?'USO ABIERTO':''} · <DownloadCount font={font}/></span><span className="card-actions"><button type="button" onClick={e=>{e.stopPropagation();onExperiment(font)}} data-cursor="PROBAR">PROBAR</button><a href={font.file} download onClick={e=>{e.stopPropagation();downloadFont(font)}} data-cursor="DESCARGAR">DESCARGAR ↓</a></span></div>
   </article>
 }
@@ -85,7 +85,7 @@ export default function Home(){
     <header className="nav"><a className="brand" href="#archive" data-cursor="ARCHIVO">AVAND / TYPE</a><nav><a href="#archive" data-cursor="VER">ARCHIVO</a><a href="#experiment" data-cursor="PROBAR">EXPERIMENTAR</a><a href="#academy" data-cursor="ACADEMIA">ACADEMIA</a><a href="#about" data-cursor="AVAND">AVAND</a></nav><span className="open-tag">USO ABIERTO</span></header>
     <section id="archive" className="archive">
       <div className="section-head"><span>ARCHIVO TIPOGRÁFICO</span><span>{fonts.length+1} TIPOGRAFÍAS</span></div>
-      <div className="archive-intro"><div className="archive-title"><span>AVAND / TYPE</span><strong>LETRAS<br/>PARA<br/>USAR.</strong></div><div className="archive-manifest"><span>01 — ARCHIVO</span><p>Tipografías de AVAND. Abiertas para experimentar, utilizar y transformar.</p><small>PASA EL CURSOR SOBRE LAS LETRAS.</small></div></div>
+      <div className="archive-intro"><div className="archive-title"><span>AVAND / TYPE</span><strong>APRENDER<br/>TAMBIÉN<br/>ES HACER.</strong></div><div className="archive-manifest"><span>01 — ARCHIVO</span><p>Tipografías de AVAND. Abiertas para experimentar, utilizar y transformar.</p><small>PASA EL CURSOR SOBRE LAS LETRAS.</small></div></div>
       <div className="font-list">{fonts.map((f,i)=><FontCard key={f.id} font={f} index={i} onExperiment={choose}/>)}</div>
       <article className="font-card paid-card" data-cursor="MYFONTS"><div className="card-top"><span><b>013</b> / CRUZ SANTA</span><span>LICENCIA COMERCIAL</span></div><div className="specimen-frame paid-specimen"><LetterSpecimen font={{family:'CruzSanta'}} text="CRUZ SANTA" size={120} tracking={-3} leading={.8} className="paid-letter-specimen"/></div><div className="paid-info"><div><strong>CRUZ SANTA</strong><span>por AVAND · 1 estilo · desde US$ 5</span></div><a href={myFontsUrl} target="_blank" rel="noreferrer" data-cursor="MYFONTS">MYFONTS ↗</a></div></article>
     </section>
