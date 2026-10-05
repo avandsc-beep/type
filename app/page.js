@@ -86,26 +86,24 @@ export default function Home(){
   return <main>
     <Cursor/><TouchDot/>
     <header className="nav"><a className="brand" href="#top" data-cursor="TOP">AVAND / TYPE</a><nav><a href="#archive" data-cursor="VER">ARCHIVO</a><a href="#experiment" data-cursor="PROBAR">EXPERIMENTAR</a><a href="#academy" data-cursor="ACADEMIA">ACADEMIA</a><a href="#about" data-cursor="AVAND">AVAND</a></nav><span className="open-tag">USO ABIERTO</span></header>
-    <section id="top" className="hero" data-cursor="EXPLORA"><div className="hero-meta"><span>01 — ARCHIVO TIPOGRÁFICO</span><span>USO ABIERTO / 2026</span></div><FitText font={fonts[0]} text="BASC" size={220} tracking={-9} leading={.72} className="hero-word"/><div className="hero-bottom"><p>TIPOGRAFÍAS PARA EXPERIMENTAR,<br/>USAR Y COMPARTIR.</p><span>SCROLL ↓</span></div></section>
+    <section id="top" className="hero" data-cursor="EXPLORA">
+      <div className="hero-meta"><span>AVAND / TYPE — 001</span><span>ARCHIVO TIPOGRÁFICO · 2026</span></div>
+      <div className="hero-main">
+        <div className="hero-kicker"><span>TIPOGRAFÍA PRINCIPAL</span><span>USO ABIERTO</span></div>
+        <FitText font={fonts[0]} text="BASC" size={260} tracking={-12} leading={.67} className="hero-word"/>
+        <div className="hero-baseline"><span>BASC FONT</span><span>DISPLAY / IDENTIDAD</span><span>AVAND</span></div>
+      </div>
+      <div className="hero-bottom">
+        <div><p className="hero-statement">TIPOGRAFÍAS PARA<br/><strong>EXPERIMENTAR, USAR<br/>Y COMPARTIR.</strong></p><p className="hero-detail">BASC abre el archivo. Una tipografía desarrollada para identidad, titulares y sistemas gráficos.</p></div>
+        <div className="hero-side"><span className="hero-download-label">DESCARGAS</span><DownloadCount font={fonts[0]}/><span>↓ ARCHIVO</span></div>
+      </div>
+    </section>
     <section id="archive" className="archive"><div className="section-head"><span>ARCHIVO</span><span>{fonts.length+1} TIPOGRAFÍAS</span></div><div className="font-list">{fonts.map((f,i)=><FontCard key={f.id} font={f} index={i} onExperiment={choose}/>)}</div>
       <article className="font-card paid-card" data-cursor="MYFONTS">
         <div className="card-top"><span>AVAND TYPE / 013 · LICENCIA COMERCIAL</span><span>MYFONTS</span></div>
         <div className="specimen-frame paid-specimen"><div className="paid-preview" aria-label="Vista previa de Cruz Santa">CRUZ SANTA</div></div>
         <div className="paid-info"><div><strong>CRUZ SANTA</strong><span>por AVAND · 1 estilo · desde US$ 5</span></div><a href={myFontsUrl} target="_blank" rel="noreferrer" data-cursor="MYFONTS">COMPRAR EN MYFONTS ↗</a></div>
       </article>
-    </section>
-    <section id="basc-project" className="basc-project">
-      <div className="section-head"><span>BASC / PROYECTO REAL</span><span>BIENAL INTERNACIONAL DE ARQUITECTURA SANTA CRUZ · 2026</span></div>
-      <div className="basc-grid">
-        <div className="basc-image"><img src="/projects/basc-bienal-2026.png" alt="Aplicación de la tipografía BASC en la Bienal Internacional de Arquitectura Santa Cruz 2026" /></div>
-        <div className="basc-copy">
-          <p className="eyebrow">TIPOGRAFÍA + IDENTIDAD</p>
-          <h2>BASC<br/>EN CONTEXTO.</h2>
-          <p>La BASC Font fue concebida para consolidar la identidad visual de la Bienal Internacional de Arquitectura Santa Cruz y desarrollada como un sistema tipográfico para comunicación institucional, titulares y aplicaciones de gran formato.</p>
-          <div className="basc-meta"><span>DISEÑO · AVAND</span><span>2026</span><span>DISPLAY</span><span>USO ABIERTO</span></div>
-          <div className="basc-stat"><strong><DownloadCount font={fonts[0]}/></strong><span>La fuente puede descargarse y utilizarse libremente.</span></div>
-        </div>
-      </div>
     </section>
     <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="240" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}} data-cursor="ESCRIBE">{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download onClick={()=>downloadFont(selected)} data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
     <section id="academy" className="academy"><div className="section-head"><span>ACADEMIA</span><span>APRENDER / EXPERIMENTAR</span></div><div className="academy-grid"><div><p className="eyebrow">PLATAFORMA</p><h2>EXPLORANDO<br/>LETRAS.</h2></div><div><p>Un espacio dedicado al aprendizaje y la experimentación tipográfica. Cursos, talleres y recursos para entender las letras desde el diseño.</p><a className="academy-link" href="https://explorando-letras.vercel.app/" target="_blank" rel="noreferrer" data-cursor="VISITAR">VISITAR PLATAFORMA ↗</a></div></div></section>
