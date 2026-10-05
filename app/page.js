@@ -53,6 +53,16 @@ function FitText({font, text, size, tracking, leading, className=''}){
   return <div ref={ref} className={'fit-text '+className} style={{fontFamily:font.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>{text}</div>
 }
 
+function downloadFont(font){
+  fetch('/api/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({font:font.name}),keepalive:true}).catch(()=>{})
+}
+
+function DownloadCount({font}){
+  const [count,setCount]=useState(null)
+  useEffect(()=>{fetch(`/api/download?font=${encodeURIComponent(font.name)}`).then(r=>r.json()).then(d=>setCount(d.count)).catch(()=>{})},[font.name])
+  return <span className="download-count">{count===null?'—':count} DESCARGAS</span>
+}
+
 function FontCard({font,index,onExperiment}){
   const [size,setSize]=useState(index===0?150:110); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86)
   const [text,setText]=useState(font.name)
@@ -64,7 +74,7 @@ function FontCard({font,index,onExperiment}){
       <label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label>
       <label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label>
     </div>
-    <div className="card-bottom"><span>{font.type} · {font.open?'USO ABIERTO':''}</span><span className="card-actions"><button type="button" onClick={e=>{e.stopPropagation();onExperiment(font)}} data-cursor="PROBAR">PROBAR</button><a href={font.file} download onClick={e=>e.stopPropagation()} data-cursor="DESCARGAR">DESCARGAR ↓</a></span></div>
+    <div className="card-bottom"><span>{font.type} · {font.open?'USO ABIERTO':''} · <DownloadCount font={font}/></span><span className="card-actions"><button type="button" onClick={e=>{e.stopPropagation();onExperiment(font)}} data-cursor="PROBAR">PROBAR</button><a href={font.file} download onClick={e=>{e.stopPropagation();downloadFont(font)}} data-cursor="DESCARGAR">DESCARGAR ↓</a></span></div>
   </article>
 }
 
@@ -84,10 +94,23 @@ export default function Home(){
         <div className="paid-info"><div><strong>CRUZ SANTA</strong><span>por AVAND · 1 estilo · desde US$ 5</span></div><a href={myFontsUrl} target="_blank" rel="noreferrer" data-cursor="MYFONTS">COMPRAR EN MYFONTS ↗</a></div>
       </article>
     </section>
-    <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="240" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}} data-cursor="ESCRIBE">{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
+    <section id="basc-project" className="basc-project">
+      <div className="section-head"><span>BASC / PROYECTO REAL</span><span>BIENAL INTERNACIONAL DE ARQUITECTURA SANTA CRUZ · 2026</span></div>
+      <div className="basc-grid">
+        <div className="basc-image"><img src="/projects/basc-bienal-2026.png" alt="Aplicación de la tipografía BASC en la Bienal Internacional de Arquitectura Santa Cruz 2026" /></div>
+        <div className="basc-copy">
+          <p className="eyebrow">TIPOGRAFÍA + IDENTIDAD</p>
+          <h2>BASC<br/>EN CONTEXTO.</h2>
+          <p>La BASC Font fue concebida para consolidar la identidad visual de la Bienal Internacional de Arquitectura Santa Cruz y desarrollada como un sistema tipográfico para comunicación institucional, titulares y aplicaciones de gran formato.</p>
+          <div className="basc-meta"><span>DISEÑO · AVAND</span><span>2026</span><span>DISPLAY</span><span>USO ABIERTO</span></div>
+          <div className="basc-stat"><strong><DownloadCount font={fonts[0]}/></strong><span>La fuente puede descargarse y utilizarse libremente.</span></div>
+        </div>
+      </div>
+    </section>
+    <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="240" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}} data-cursor="ESCRIBE">{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download onClick={()=>downloadFont(selected)} data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
     <section id="academy" className="academy"><div className="section-head"><span>ACADEMIA</span><span>APRENDER / EXPERIMENTAR</span></div><div className="academy-grid"><div><p className="eyebrow">PLATAFORMA</p><h2>EXPLORANDO<br/>LETRAS.</h2></div><div><p>Un espacio dedicado al aprendizaje y la experimentación tipográfica. Cursos, talleres y recursos para entender las letras desde el diseño.</p><a className="academy-link" href="https://explorando-letras.vercel.app/" target="_blank" rel="noreferrer" data-cursor="VISITAR">VISITAR PLATAFORMA ↗</a></div></div></section>
     <section className="project"><div className="project-number">AVAND / PROYECTOS</div><div><p className="eyebrow">TIPOGRAFÍA COMO INVESTIGACIÓN</p><h2>DISEÑAR<br/>TAMBIÉN ES<br/>EXPLORAR.</h2></div><p className="project-copy">Proyectos tipográficos, experimentos y herramientas desarrolladas desde AVAND.</p></section>
-    <section id="about" className="about"><span>AVAND</span><div><h3>TIPOGRAFÍA<br/>COMO MATERIA.</h3><p>AVAND es un estudio de diseño y tipografía dirigido por Marco Antonio Ramirez Murga. Este archivo reúne tipos de uso abierto, experimentos y proyectos.</p></div><div><p>CONTACTO</p><p><a href="mailto:hola@avand-design.com" data-cursor="EMAIL">hola@avand-design.com</a></p><p>REDES</p><p><a href="#" data-cursor="INSTAGRAM">Instagram</a><br/><a href="#" data-cursor="BEHANCE">Behance</a></p></div></section>
+    <section id="about" className="about"><span>AVAND</span><div><h3>TIPOGRAFÍA<br/>COMO MATERIA.</h3><p>AVAND es un estudio de diseño y tipografía dirigido por Marco Antonio Ramirez Murga. Este archivo reúne tipos de uso abierto, experimentos y proyectos.</p></div><div><p>CONTACTO</p><p><a href="mailto:info@avand-design.com" data-cursor="EMAIL">info@avand-design.com</a></p><p>REDES</p><p><a href="#" data-cursor="INSTAGRAM">Instagram</a><br/><a href="#" data-cursor="BEHANCE">Behance</a></p></div></section>
     <footer className="footer"><span>AVAND / TYPE © 2026</span><div><a href="#archive">ARCHIVO</a><a href="#experiment">EXPERIMENTA</a><a href="#academy">ACADEMIA</a></div></footer>
   </main>
 }
