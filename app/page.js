@@ -19,13 +19,18 @@ const fonts = [
   { id:'012', name:'TRAMAPUNTO', file:'/fonts/TRAMAPUNTO.ttf', family:'TramaPunto', type:'Experimental', year:'2026', note:'Tipografía construida desde trama y punto.', open:true },
 ]
 
+const modes = [
+  ['tilt','INCLINAR'], ['stroke','TRAZO'], ['scale','TAMAÑO'], ['positive','POSITIVO'], ['negative','NEGATIVO']
+]
+
 function Cursor(){
   const [pos,setPos]=useState({x:-100,y:-100}); const [label,setLabel]=useState(''); const [active,setActive]=useState(false)
   const target=useRef({x:-100,y:-100}); const current=useRef({x:-100,y:-100})
   useEffect(()=>{
     const move=e=>{target.current={x:e.clientX,y:e.clientY};const hit=e.target.closest('[data-cursor]');setLabel(hit?.dataset.cursor||'');setActive(!!hit)}
-    let raf; const tick=()=>{current.current.x+=(target.current.x-current.current.x)*.22;current.current.y+=(target.current.y-current.current.y)*.22;setPos({...current.current});raf=requestAnimationFrame(tick)}
-    window.addEventListener('mousemove',move,{passive:true});raf=requestAnimationFrame(tick)
+    let raf
+    const tick=()=>{current.current.x+=(target.current.x-current.current.x)*.18;current.current.y+=(target.current.y-current.current.y)*.18;setPos({...current.current});raf=requestAnimationFrame(tick)}
+    window.addEventListener('mousemove',move,{passive:true}); raf=requestAnimationFrame(tick)
     return()=>{window.removeEventListener('mousemove',move);cancelAnimationFrame(raf)}
   },[])
   return <div className={'cursor-wrap '+(active?'is-active':'')} style={{left:pos.x,top:pos.y}} aria-hidden="true"><i className="cursor-ghost ghost-3"/><i className="cursor-ghost ghost-2"/><i className="cursor-ghost ghost-1"/><div className="cursor-core"><span>{label}</span></div></div>
@@ -33,82 +38,58 @@ function Cursor(){
 
 function TouchDot(){
   const [pos,setPos]=useState({x:-100,y:-100}); const [visible,setVisible]=useState(false)
-  useEffect(()=>{const down=e=>{if(e.pointerType==='mouse')return;setPos({x:e.clientX,y:e.clientY});setVisible(true);clearTimeout(window.__avandTouchTimer);window.__avandTouchTimer=setTimeout(()=>setVisible(false),450)};window.addEventListener('pointerdown',down,{passive:true});return()=>{window.removeEventListener('pointerdown',down);clearTimeout(window.__avandTouchTimer)}},[])
+  useEffect(()=>{const down=e=>{if(e.pointerType==='mouse')return;setPos({x:e.clientX,y:e.clientY});setVisible(true);clearTimeout(window.__avandTouchTimer);window.__avandTouchTimer=setTimeout(()=>setVisible(false),500)};window.addEventListener('pointerdown',down,{passive:true});return()=>{window.removeEventListener('pointerdown',down);clearTimeout(window.__avandTouchTimer)}},[])
   return <div className={'touch-dot '+(visible?'is-visible':'')} style={{left:pos.x,top:pos.y}} aria-hidden="true"/>
 }
 
-function FitText({font, text, size, tracking, leading, className=''}){
+function FitText({font,text,size,tracking,leading,className=''}){
   const ref=useRef(null)
   useEffect(()=>{
-    const el=ref.current; if(!el)return
-    const fit=()=>{
-      el.style.setProperty('--fit-scale','1')
-      const box=el.parentElement?.clientWidth||1
-      const natural=el.scrollWidth||1
-      el.style.setProperty('--fit-scale',Math.min(1,box/natural).toFixed(4))
-    }
-    const ro=new ResizeObserver(fit); if(el.parentElement)ro.observe(el.parentElement); document.fonts?.ready.then(fit); fit()
-    return()=>ro.disconnect()
+    const el=ref.current;if(!el)return
+    const fit=()=>{el.style.setProperty('--fit-scale','1');const box=el.parentElement?.clientWidth||1;const natural=el.scrollWidth||1;el.style.setProperty('--fit-scale',Math.min(1,box/natural).toFixed(4))}
+    const ro=new ResizeObserver(fit); if(el.parentElement)ro.observe(el.parentElement); document.fonts?.ready.then(fit); fit(); return()=>ro.disconnect()
   },[font,size,tracking,text])
   return <div ref={ref} className={'fit-text '+className} style={{fontFamily:font.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>{text}</div>
 }
 
-function downloadFont(font){
-  fetch('/api/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({font:font.name}),keepalive:true}).catch(()=>{})
-}
+function downloadFont(font){fetch('/api/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({font:font.name}),keepalive:true}).catch(()=>{})}
 
 function DownloadCount({font}){
   const [count,setCount]=useState(null)
-  useEffect(()=>{fetch(`/api/download?font=${encodeURIComponent(font.name)}`).then(r=>r.json()).then(d=>setCount(d.count)).catch(()=>{})},[font.name])
+  useEffect(()=>{fetch(`/api/download?font=${encodeURIComponent(font.name)}`).then(r=>r.json()).then(d=>setCount(d.count)).catch(()=>setCount(0))},[font.name])
   return <span className="download-count">{count===null?'—':count} DESCARGAS</span>
 }
 
-function FontCard({font,index,onExperiment}){
-  const [size,setSize]=useState(index===0?150:110); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86)
-  const [text,setText]=useState(font.name)
-  return <article className={'font-card '+(index===0?'is-primary':'')} onClick={()=>onExperiment(font)} data-cursor="ABRIR">
-    <div className="card-top"><span>AVAND TYPE / {font.id}{index===0?' · PRINCIPAL':''}</span><span>{font.year}</span></div>
-    <div className="specimen-frame"><FitText font={font} text={text} size={size} tracking={tracking} leading={leading}/></div>
+function FontCard({font,index,onExperiment,mode}){
+  const [size,setSize]=useState(index===0?145:105); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86); const [text,setText]=useState(font.name)
+  return <article className={'font-card '+(index===0?'is-primary ':'')+'mode-'+mode} onClick={()=>onExperiment(font)} data-cursor="ABRIR">
+    <div className="card-top"><span><b>{font.id}</b> / {font.name}</span><span>{font.type}</span></div>
+    <div className="specimen-frame"><FitText font={font} text={text} size={size} tracking={tracking} leading={leading}/><span className="specimen-mark">AVAND TYPE</span></div>
     <div className="card-controls" onClick={e=>e.stopPropagation()}>
       <label>TAMAÑO <input type="range" min="32" max="220" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label>
       <label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label>
       <label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label>
     </div>
-    <div className="card-bottom"><span>{font.type} · {font.open?'USO ABIERTO':''} · <DownloadCount font={font}/></span><span className="card-actions"><button type="button" onClick={e=>{e.stopPropagation();onExperiment(font)}} data-cursor="PROBAR">PROBAR</button><a href={font.file} download onClick={e=>{e.stopPropagation();downloadFont(font)}} data-cursor="DESCARGAR">DESCARGAR ↓</a></span></div>
+    <div className="card-bottom"><span>{font.year} · {font.open?'USO ABIERTO':''} · <DownloadCount font={font}/></span><span className="card-actions"><button type="button" onClick={e=>{e.stopPropagation();onExperiment(font)}} data-cursor="PROBAR">PROBAR</button><a href={font.file} download onClick={e=>{e.stopPropagation();downloadFont(font)}} data-cursor="DESCARGAR">DESCARGAR ↓</a></span></div>
   </article>
 }
 
 export default function Home(){
-  const [text,setText]=useState('TIPOGRAFÍA')
-  const [size,setSize]=useState(150); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86)
-  const [selected,setSelected]=useState(fonts[0])
+  const [mode,setMode]=useState('tilt'); const [text,setText]=useState('TIPOGRAFÍA'); const [size,setSize]=useState(150); const [tracking,setTracking]=useState(-2); const [leading,setLeading]=useState(.86); const [selected,setSelected]=useState(fonts[0])
   const choose=f=>{setSelected(f);setText(f.name);document.querySelector('#experiment')?.scrollIntoView({behavior:'smooth'})}
   return <main>
     <Cursor/><TouchDot/>
-    <header className="nav"><a className="brand" href="#top" data-cursor="TOP">AVAND / TYPE</a><nav><a href="#archive" data-cursor="VER">ARCHIVO</a><a href="#experiment" data-cursor="PROBAR">EXPERIMENTAR</a><a href="#academy" data-cursor="ACADEMIA">ACADEMIA</a><a href="#about" data-cursor="AVAND">AVAND</a></nav><span className="open-tag">USO ABIERTO</span></header>
-    <section id="top" className="hero" data-cursor="EXPLORA">
-      <div className="hero-meta"><span>AVAND / TYPE — 001</span><span>ARCHIVO TIPOGRÁFICO · 2026</span></div>
-      <div className="hero-main">
-        <div className="hero-kicker"><span>TIPOGRAFÍA PRINCIPAL</span><span>USO ABIERTO</span></div>
-        <FitText font={fonts[0]} text="BASC" size={260} tracking={-12} leading={.67} className="hero-word"/>
-        <div className="hero-baseline"><span>BASC FONT</span><span>DISPLAY / IDENTIDAD</span><span>AVAND</span></div>
-      </div>
-      <div className="hero-bottom">
-        <div><p className="hero-statement">TIPOGRAFÍAS PARA<br/><strong>EXPERIMENTAR, USAR<br/>Y COMPARTIR.</strong></p><p className="hero-detail">BASC abre el archivo. Una tipografía desarrollada para identidad, titulares y sistemas gráficos.</p></div>
-        <div className="hero-side"><span className="hero-download-label">DESCARGAS</span><DownloadCount font={fonts[0]}/><span>↓ ARCHIVO</span></div>
-      </div>
+    <header className="nav"><a className="brand" href="#archive" data-cursor="ARCHIVO">AVAND / TYPE</a><nav><a href="#archive" data-cursor="VER">ARCHIVO</a><a href="#experiment" data-cursor="PROBAR">EXPERIMENTAR</a><a href="#academy" data-cursor="ACADEMIA">ACADEMIA</a><a href="#about" data-cursor="AVAND">AVAND</a></nav><span className="open-tag">USO ABIERTO</span></header>
+    <section id="archive" className="archive">
+      <div className="section-head"><span>ARCHIVO TIPOGRÁFICO</span><span>{fonts.length+1} TIPOGRAFÍAS</span></div>
+      <div className="archive-intro"><div className="archive-title"><span>AVAND / TYPE</span><strong>LETRAS<br/>PARA<br/>USAR.</strong></div><div className="archive-manifest"><span>01 — ARCHIVO</span><p>Tipografías de AVAND. Abiertas para experimentar, utilizar y transformar.</p><small>ELIGE UNA INTERACCIÓN Y PASA SOBRE LAS LETRAS.</small></div></div>
+      <div className="motion-tools"><span>INTERACCIÓN / <b>{modes.find(m=>m[0]===mode)?.[1]}</b></span>{modes.map(([id,label])=><button key={id} className={mode===id?'selected':''} onClick={()=>setMode(id)} data-cursor={label}>{label}</button>)}</div>
+      <div className="font-list">{fonts.map((f,i)=><FontCard key={f.id} font={f} index={i} mode={mode} onExperiment={choose}/>)}</div>
+      <article className="font-card paid-card" data-cursor="MYFONTS"><div className="card-top"><span><b>013</b> / CRUZ SANTA</span><span>LICENCIA COMERCIAL</span></div><div className="specimen-frame paid-specimen"><div className="paid-preview">CRUZ SANTA</div></div><div className="paid-info"><div><strong>CRUZ SANTA</strong><span>por AVAND · 1 estilo · desde US$ 5</span></div><a href={myFontsUrl} target="_blank" rel="noreferrer" data-cursor="MYFONTS">MYFONTS ↗</a></div></article>
     </section>
-    <section id="archive" className="archive"><div className="section-head"><span>ARCHIVO</span><span>{fonts.length+1} TIPOGRAFÍAS</span></div><div className="font-list">{fonts.map((f,i)=><FontCard key={f.id} font={f} index={i} onExperiment={choose}/>)}</div>
-      <article className="font-card paid-card" data-cursor="MYFONTS">
-        <div className="card-top"><span>AVAND TYPE / 013 · LICENCIA COMERCIAL</span><span>MYFONTS</span></div>
-        <div className="specimen-frame paid-specimen"><div className="paid-preview" aria-label="Vista previa de Cruz Santa">CRUZ SANTA</div></div>
-        <div className="paid-info"><div><strong>CRUZ SANTA</strong><span>por AVAND · 1 estilo · desde US$ 5</span></div><a href={myFontsUrl} target="_blank" rel="noreferrer" data-cursor="MYFONTS">COMPRAR EN MYFONTS ↗</a></div>
-      </article>
-    </section>
-    <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="240" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-20" max="30" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".55" max="1.4" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}} data-cursor="ESCRIBE">{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download onClick={()=>downloadFont(selected)} data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
-    <section id="academy" className="academy"><div className="section-head"><span>ACADEMIA</span><span>APRENDER / EXPERIMENTAR</span></div><div className="academy-grid"><div><p className="eyebrow">PLATAFORMA</p><h2>EXPLORANDO<br/>LETRAS.</h2></div><div><p>Un espacio dedicado al aprendizaje y la experimentación tipográfica. Cursos, talleres y recursos para entender las letras desde el diseño.</p><a className="academy-link" href="https://explorando-letras.vercel.app/" target="_blank" rel="noreferrer" data-cursor="VISITAR">VISITAR PLATAFORMA ↗</a></div></div></section>
-    <section className="project"><div className="project-number">AVAND / PROYECTOS</div><div><p className="eyebrow">TIPOGRAFÍA COMO INVESTIGACIÓN</p><h2>DISEÑAR<br/>TAMBIÉN ES<br/>EXPLORAR.</h2></div><p className="project-copy">Proyectos tipográficos, experimentos y herramientas desarrolladas desde AVAND.</p></section>
-    <section id="about" className="about"><span>AVAND</span><div><h3>TIPOGRAFÍA<br/>COMO MATERIA.</h3><p>AVAND es un estudio de diseño y tipografía dirigido por Marco Antonio Ramirez Murga. Este archivo reúne tipos de uso abierto, experimentos y proyectos.</p></div><div><p>CONTACTO</p><p><a href="mailto:info@avand-design.com" data-cursor="EMAIL">info@avand-design.com</a></p><p>REDES</p><p><a href="#" data-cursor="INSTAGRAM">Instagram</a><br/><a href="#" data-cursor="BEHANCE">Behance</a></p></div></section>
-    <footer className="footer"><span>AVAND / TYPE © 2026</span><div><a href="#archive">ARCHIVO</a><a href="#experiment">EXPERIMENTA</a><a href="#academy">ACADEMIA</a></div></footer>
+    <section id="experiment" className="experiment"><div className="section-head"><span>EXPERIMENTA</span><span>{selected.name}</span></div><div className="experiment-top"><div className="font-switcher">{fonts.map(f=><button key={f.id} className={selected.id===f.id?'selected':''} onClick={()=>{setSelected(f);setText(f.name)}} data-cursor="CAMBIAR">{f.name}</button>)}</div><div className="experiment-hint">ESCRIBE / ARRASTRA / PRUEBA</div></div><div className="experiment-stage"><textarea aria-label="Texto de prueba" value={text} onChange={e=>setText(e.target.value)}/></div><div className="controls"><label>TAMAÑO <input type="range" min="32" max="240" value={size} onChange={e=>setSize(+e.target.value)}/><b>{size}px</b></label><label>TRACKING <input type="range" min="-30" max="40" value={tracking} onChange={e=>setTracking(+e.target.value)}/><b>{tracking}px</b></label><label>INTERLINEADO <input type="range" min=".5" max="1.5" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label></div><div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>{text}</div><div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download onClick={()=>downloadFont(selected)} data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div></section>
+    <section id="academy" className="academy"><div className="section-head"><span>ACADEMIA</span><span>EXPLORANDO LETRAS</span></div><div className="academy-grid"><h2>APRENDER<br/>TAMBIÉN<br/>ES HACER.</h2><div><p>Un espacio de exploración tipográfica para estudiantes y diseñadores. Ejercicios, experimentos y herramientas para comprender las letras haciéndolas.</p><a className="academy-link" href="https://explorando-letras.vercel.app/" target="_blank" rel="noreferrer" data-cursor="EXPLORAR">EXPLORAR ACADEMIA ↗</a></div></div></section>
+    <section id="about" className="about"><span>AVAND</span><div><h3>TIPOGRAFÍA<br/>COMO<br/>MATERIA.</h3><p>AVAND / TYPE reúne investigaciones, alfabetos y tipografías desarrolladas desde la práctica del diseño. Un archivo abierto para probarlas, usarlas y llevarlas más lejos.</p></div><span>info@avand-design.com</span></section>
+    <footer className="footer"><span>© AVAND / TYPE</span><div><a href="#archive">ARCHIVO</a><a href="#experiment">EXPERIMENTA</a><a href="#about">CONTACTO</a></div></footer>
   </main>
 }
