@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const fonts = [
   { id:'001', name:'BASC', file:'/fonts/BASC-Regular.otf', family:'BASC', type:'Display', year:'2026', note:'Una exploración de forma, ritmo y construcción.' },
@@ -20,14 +20,32 @@ const fonts = [
 function Cursor(){
   const [pos,setPos]=useState({x:-100,y:-100})
   const [label,setLabel]=useState('')
+  const [active,setActive]=useState(false)
+  const target=useRef({x:-100,y:-100})
+  const current=useRef({x:-100,y:-100})
   useEffect(()=>{
-    const move=e=>setPos({x:e.clientX,y:e.clientY})
-    const over=e=>setLabel(e.target.closest('[data-cursor]')?.dataset.cursor || '')
+    const move=e=>{
+      target.current={x:e.clientX,y:e.clientY}
+      const hit=e.target.closest('[data-cursor]')
+      setLabel(hit?.dataset.cursor || '')
+      setActive(!!hit)
+    }
+    let raf
+    const tick=()=>{
+      current.current.x += (target.current.x-current.current.x)*.24
+      current.current.y += (target.current.y-current.current.y)*.24
+      setPos({...current.current})
+      raf=requestAnimationFrame(tick)
+    }
     window.addEventListener('mousemove',move)
-    window.addEventListener('mouseover',over)
-    return()=>{window.removeEventListener('mousemove',move);window.removeEventListener('mouseover',over)}
+    raf=requestAnimationFrame(tick)
+    return()=>{window.removeEventListener('mousemove',move);cancelAnimationFrame(raf)}
   },[])
-  return <div className={'cursor '+(label?'is-active':'')} style={{transform:`translate3d(${pos.x}px,${pos.y}px,0)`}}><span>{label}</span></div>
+  const style={left:pos.x,top:pos.y}
+  return <div className={'cursor-wrap '+(active?'is-active':'')} style={style} aria-hidden="true">
+    <i className="cursor-ghost ghost-3"/><i className="cursor-ghost ghost-2"/><i className="cursor-ghost ghost-1"/>
+    <div className="cursor-core"><span>{label}</span></div>
+  </div>
 }
 
 function TouchDot(){
@@ -74,7 +92,7 @@ export default function Home(){
       <div className="font-list">
         {fonts.map((f,i)=><article className="font-card" key={f.id} onClick={()=>setSelected(f)} data-cursor="ABRIR">
           <div className="card-top"><span>AVAND TYPE / {f.id}</span><span>{f.year}</span></div>
-          <div className="specimen" style={{fontFamily:f.family}}>{f.name}</div>
+          <div className="specimen" style={{fontFamily:f.family,'--fit': Math.max(6, Math.min(18, 150 / f.name.length)) + 'vw'}}>{f.name}</div>
           <div className="card-bottom"><span>{f.type}</span><span className="card-actions"><button type="button" onClick={(e)=>{e.stopPropagation();setSelected(f)}} data-cursor="PROBAR">PROBAR</button><a href={f.file} download onClick={e=>e.stopPropagation()} data-cursor="DESCARGAR">DESCARGAR ↓</a></span></div>
         </article>)}
       </div>
