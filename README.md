@@ -1,13 +1,15 @@
-# AVAND / TYPE — V4
+# AVAND / TYPE v5
 
-Catálogo tipográfico experimental de AVAND.
+Archivo tipográfico y laboratorio experimental de AVAND.
 
-Cambios V4:
-- muestras tipográficas ajustadas para entrar completas en su contenedor;
-- transiciones motion graphics aleatorias y suaves entre color, trazo, inclinación y desplazamiento;
-- cursor magenta con estado negativo/contorno y réplicas;
-- comportamiento táctil para móvil;
-- descargas directas de las fuentes;
-- fuentes incluidas en `public/fonts`.
+## Cambios de esta versión
+- BASC pasa a ser la tipografía principal.
+- Se eliminan las animaciones automáticas de color.
+- Cada tipografía de uso abierto tiene sus propios reguladores de tamaño, tracking e interlineado dentro del mismo bloque del archivo.
+- El espécimen se ajusta al ancho real para evitar letras cortadas.
+- Se mantiene el cursor magenta, su estado negativo/contorno y sus réplicas.
+- Cruz Santa aparece como la única tipografía comercial: se muestra una previsualización y el botón dirige a MyFonts. No se incrusta ni se distribuye el archivo de la fuente comercial.
+- Enlace comercial: https://www.myfonts.com/es/collections/cruz-santa-font-avand/
 
-Vercel: framework Next.js, root `./`, sin variables de entorno.
+## Desarrollo
+Next.js App Router.
