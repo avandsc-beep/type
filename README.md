@@ -1,10 +1,11 @@
-# AVAND / TYPE v13
+# AVAND / TYPE v15
 
 Archivo tipográfico experimental de AVAND.
 
-## Correcciones
-- Las interacciones INCLINAR, TRAZO, TAMAÑO, POSITIVO y NEGATIVO se aplican exclusivamente al glifo bajo el cursor.
-- El efecto se sortea al entrar en cada letra y desaparece al salir.
+## Interacción
+- La unidad de interacción es la línea tipográfica completa, no cada glifo.
+- Al entrar el cursor en una línea, se elige aleatoriamente un único efecto: inclinar, trazo, tamaño, positivo o negativo.
+- El efecto solo afecta la línea bajo el cursor y desaparece al salir.
+- La experiencia prioriza escritorio.
+- Los controles mantienen los rangos anteriores y un tratamiento visual sutil.
 - Cruz Santa se visualiza con su archivo real, pero no se ofrece para descarga.
-- Los reguladores vuelven a los rangos de la versión anterior; solo se suaviza su tratamiento visual y se elimina el azul del navegador.
-- Prioridad de experiencia: escritorio.

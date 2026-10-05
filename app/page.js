@@ -48,22 +48,19 @@ function DownloadCount({font}){
 }
 
 function LetterSpecimen({font,text,size,tracking,leading,className=''}){
-  const [activeLetter,setActiveLetter]=useState(null)
-  const [effect,setEffect]=useState(null)
+  const [effect,setEffect]=useState('')
   const choices=['tilt','stroke','scale','positive','negative']
-  const enter=(index)=>{
-    setActiveLetter(index)
+  const enter=()=>{
     setEffect(choices[Math.floor(Math.random()*choices.length)])
   }
-  const leave=(index)=>{
-    setActiveLetter(current=>current===index?null:current)
-  }
-  return <div className={'letter-specimen '+className} style={{fontFamily:font.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}>
-    {[...text].map((char,i)=>{
-      const active=activeLetter===i && char!==' '
-      return <span key={i} className={'letter '+(active?effect||'':'')} onPointerEnter={()=>enter(i)} onPointerLeave={()=>leave(i)} data-letter-index={i}>{char===' '?'\u00A0':char}</span>
-    })}
-  </div>
+  const leave=()=>setEffect('')
+  return <div
+    className={'letter-specimen '+className+' '+(effect||'')}
+    style={{fontFamily:font.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}}
+    onPointerEnter={enter}
+    onPointerLeave={leave}
+    data-letter-effect={effect||'none'}
+  >{text}</div>
 }
 
 function FontCard({font,index,onExperiment}){
