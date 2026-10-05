@@ -1,11 +1,10 @@
-# AVAND / TYPE v15
+# AVAND / TYPE v14
 
 Archivo tipográfico experimental de AVAND.
 
-## Interacción
-- La unidad de interacción es la línea tipográfica completa, no cada glifo.
-- Al entrar el cursor en una línea, se elige aleatoriamente un único efecto: inclinar, trazo, tamaño, positivo o negativo.
-- El efecto solo afecta la línea bajo el cursor y desaparece al salir.
-- La experiencia prioriza escritorio.
-- Los controles mantienen los rangos anteriores y un tratamiento visual sutil.
-- Cruz Santa se visualiza con su archivo real, pero no se ofrece para descarga.
+## Ajuste de controles
+- Los controles de tamaño, tracking e interlineado recuperan una escala compacta y práctica.
+- En escritorio cada control ocupa solo el espacio necesario: etiqueta + slider corto + valor.
+- Se mantiene el tratamiento monocromático y sutil, sin azul.
+- Los efectos tipográficos siguen siendo automáticos y letra por letra al pasar el cursor.
+- Cruz Santa se utiliza solo para visualización y no para descarga.
