@@ -30,6 +30,23 @@ function Cursor(){
   return <div className={'cursor '+(label?'is-active':'')} style={{transform:`translate3d(${pos.x}px,${pos.y}px,0)`}}><span>{label}</span></div>
 }
 
+function TouchDot(){
+  const [pos,setPos]=useState({x:-100,y:-100})
+  const [visible,setVisible]=useState(false)
+  useEffect(()=>{
+    const down=e=>{
+      if(e.pointerType==='mouse') return
+      setPos({x:e.clientX,y:e.clientY})
+      setVisible(true)
+      window.clearTimeout(window.__avandTouchTimer)
+      window.__avandTouchTimer=window.setTimeout(()=>setVisible(false),450)
+    }
+    window.addEventListener('pointerdown',down,{passive:true})
+    return()=>{window.removeEventListener('pointerdown',down);window.clearTimeout(window.__avandTouchTimer)}
+  },[])
+  return <div className={'touch-dot '+(visible?'is-visible':'')} style={{left:pos.x,top:pos.y}} aria-hidden="true"/>
+}
+
 export default function Home(){
   const [text,setText]=useState('TIPOGRAFÍA')
   const [size,setSize]=useState(118)
@@ -39,6 +56,7 @@ export default function Home(){
 
   return <main>
     <Cursor />
+    <TouchDot />
     <header className="nav">
       <a className="brand" href="#top" data-cursor="TOP">AVAND / TYPE</a>
       <nav><a href="#archive" data-cursor="VER">ARCHIVO</a><a href="#experiment" data-cursor="PROBAR">EXPERIMENTAR</a><a href="#academy" data-cursor="ACADEMIA">ACADEMIA</a><a href="#about" data-cursor="AVAND">AVAND</a></nav>
@@ -57,7 +75,7 @@ export default function Home(){
         {fonts.map((f,i)=><article className="font-card" key={f.id} onClick={()=>setSelected(f)} data-cursor="ABRIR">
           <div className="card-top"><span>AVAND TYPE / {f.id}</span><span>{f.year}</span></div>
           <div className="specimen" style={{fontFamily:f.family}}>{f.name}</div>
-          <div className="card-bottom"><span>{f.type}</span><span>EXPLORAR →</span></div>
+          <div className="card-bottom"><span>{f.type}</span><span className="card-actions"><button type="button" onClick={(e)=>{e.stopPropagation();setSelected(f)}} data-cursor="PROBAR">PROBAR</button><a href={f.file} download onClick={e=>e.stopPropagation()} data-cursor="DESCARGAR">DESCARGAR ↓</a></span></div>
         </article>)}
       </div>
     </section>
@@ -72,7 +90,7 @@ export default function Home(){
         <label>INTERLINEADO <input type="range" min=".65" max="1.3" step=".01" value={leading} onChange={e=>setLeading(+e.target.value)}/><b>{leading}</b></label>
       </div>
       <div className="live-output" style={{fontFamily:selected.family,fontSize:size,letterSpacing:tracking,lineHeight:leading}} data-cursor="ESCRIBE">{text}</div>
-      <div className="experiment-footer"><span>{selected.note}</span><a href={selected.file} download data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div>
+      <div className="experiment-footer"><span>{selected.note}</span><a className="download-button" href={selected.file} download data-cursor="DESCARGAR">DESCARGAR {selected.name} ↓</a></div>
     </section>
 
     <section id="academy" className="academy">
