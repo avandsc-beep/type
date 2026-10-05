@@ -1,1 +1,20 @@
-{"name":"avand-type","version":"0.7.0","private":true,"scripts":{"dev":"next dev","build":"next build","start":"next start"},"dependencies":{"@swc/helpers":"^0.5.15","next":"15.5.7","react":"19.1.0","react-dom":"19.1.0","counterapi":"^3.1.0"}}
+{
+  "name": "avand-type",
+  "version": "22.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.5.15",
+    "counterapi": "^3.1.0",
+    "next": "15.5.7",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  }
+}

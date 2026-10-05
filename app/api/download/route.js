@@ -1,6 +1,8 @@
 import { Counter } from 'counterapi'
+import { fonts, counterKey } from '../../../lib/fonts'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const workspace = process.env.COUNTERAPI_WORKSPACE || 'avand-type'
 const accessToken = process.env.COUNTERAPI_ACCESS_TOKEN
@@ -11,33 +13,55 @@ const counter = new Counter({
   timeout: 5000,
 })
 
-function counterName(font) {
-  return `download-${String(font).trim().toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+// CounterAPI ha devuelto el valor en distintos campos según la versión.
+function readCount(result) {
+  const n = Number(result?.data?.up_count ?? result?.data?.value ?? result?.value ?? 0)
+  return Number.isFinite(n) ? n : 0
 }
 
-export async function GET(request) {
-  const font = request.nextUrl.searchParams.get('font')
-  if (!font) return Response.json({ error: 'Missing font' }, { status: 400 })
-
-  try {
-    const result = await counter.get(counterName(font))
-    const count = Number(result?.data?.up_count ?? result?.data?.value ?? result?.value ?? 0)
-    return Response.json({ count: Number.isFinite(count) ? count : 0 })
-  } catch (error) {
-    console.error('CounterAPI GET error:', error)
-    return Response.json({ count: 0 })
-  }
+// GET /api/download → { counts: { '001': 12, '002': 3, ... } }  (una sola llamada para toda la página)
+export async function GET() {
+  const entries = await Promise.all(
+    fonts.map(async (font) => {
+      try {
+        return [font.id, readCount(await counter.get(counterKey(font.name)))]
+      } catch {
+        return [font.id, 0]
+      }
+    })
+  )
+  return Response.json(
+    { counts: Object.fromEntries(entries) },
+    { headers: { 'Cache-Control': 'public, s-maxage=30, stale-while-revalidate=300' } }
+  )
 }
 
+// POST /api/download  { id: '001' } → suma una descarga. Solo acepta ids que existen en el archivo.
 export async function POST(request) {
-  try {
-    const body = await request.json()
-    const font = body?.font
-    if (!font) return Response.json({ error: 'Missing font' }, { status: 400 })
+  const origin = request.headers.get('origin')
+  if (origin) {
+    try {
+      if (new URL(origin).host !== request.headers.get('host')) {
+        return Response.json({ ok: false, error: 'Forbidden' }, { status: 403 })
+      }
+    } catch {
+      return Response.json({ ok: false, error: 'Forbidden' }, { status: 403 })
+    }
+  }
 
-    const result = await counter.up(counterName(font))
-    const count = Number(result?.data?.up_count ?? result?.data?.value ?? result?.value ?? 0)
-    return Response.json({ ok: true, count: Number.isFinite(count) ? count : 0 })
+  let body
+  try {
+    body = await request.json()
+  } catch {
+    return Response.json({ ok: false, error: 'Invalid JSON' }, { status: 400 })
+  }
+
+  const font = fonts.find((f) => f.id === body?.id)
+  if (!font) return Response.json({ ok: false, error: 'Unknown font' }, { status: 400 })
+
+  try {
+    const result = await counter.up(counterKey(font.name))
+    return Response.json({ ok: true, count: readCount(result) })
   } catch (error) {
     console.error('CounterAPI POST error:', error)
     return Response.json({ ok: false, error: 'Counter unavailable' }, { status: 503 })
