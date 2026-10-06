@@ -1,0 +1,7 @@
+Pon aquí las tipografías nuevas (.ttf u .otf) y ejecuta:
+
+    npm run agregar
+
+El sistema lee solo el nombre, el año, el autor y los caracteres de cada archivo,
+crea la versión liviana para mostrar en pantalla y suma la ficha al sitio.
+Te pregunta únicamente lo que no puede saber (tipo y una nota breve).

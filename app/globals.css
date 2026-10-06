@@ -4,26 +4,9 @@
    7. Probador  8. Academia / Acerca  9. Cursor  10. Responsive / preferencias
    ========================================================================== */
 
-/* 1. Fuentes — versiones .woff2 livianas solo para mostrar en pantalla.
-      Los archivos originales de /public/fonts son los que se descargan.
+/* 1. Fuentes — los @font-face se generan solos desde data/fonts.json (ver lib/fontFaces.js).
+      Se muestran versiones .woff2 livianas; lo que se descarga son los originales de /public/fonts.
       Cruz Santa (de pago) solo carga una vista previa con las letras del sitio. */
-@font-face{font-family:BASC;src:url('/fonts/web/basc-regular.woff2') format('woff2');font-display:swap}
-@font-face{font-family:AVAND10;src:url('/fonts/web/avand10.woff2') format('woff2');font-display:swap}
-@font-face{font-family:BauhausHomenaje;src:url('/fonts/web/bauhaushomenaje.woff2') format('woff2');font-display:swap}
-@font-face{font-family:ExtraLargeAVAND;src:url('/fonts/web/extralargeavand-regular.woff2') format('woff2');font-display:swap}
-@font-face{font-family:INFOCAL;src:url('/fonts/web/infocal.woff2') format('woff2');font-display:swap}
-@font-face{font-family:Prazo;src:url('/fonts/web/prazo-regular.woff2') format('woff2');font-display:swap}
-@font-face{font-family:PrazoCompacto;src:url('/fonts/web/prazo-compactoregular.woff2') format('woff2');font-display:swap}
-@font-face{font-family:PrazoCursiva;src:url('/fonts/web/prazo-cursiva.woff2') format('woff2');font-display:swap}
-@font-face{font-family:PrazoRedondo;src:url('/fonts/web/prazo-redondo.woff2') format('woff2');font-display:swap}
-@font-face{font-family:PrazoSerif;src:url('/fonts/web/prazoserif-regular.woff2') format('woff2');font-display:swap}
-@font-face{font-family:QDRD;src:url('/fonts/web/qdrd.woff2') format('woff2');font-display:swap}
-@font-face{font-family:TramaPunto;src:url('/fonts/web/tramapunto.woff2') format('woff2');font-display:swap}
-@font-face{font-family:Bloque001;src:url('/fonts/web/bloque001.woff2') format('woff2');font-display:swap}
-@font-face{font-family:Cafefont;src:url('/fonts/web/cafefont-regular.woff2') format('woff2');font-display:swap}
-@font-face{font-family:PalacePalaceFont;src:url('/fonts/web/palace-palace-font.woff2') format('woff2');font-display:swap}
-@font-face{font-family:Tiendita;src:url('/fonts/web/tiendita.woff2') format('woff2');font-display:swap}
-@font-face{font-family:CruzSanta;src:url('/fonts/web/cruzsanta-preview.woff2') format('woff2');font-display:swap}
 
 /* 2. Base */
 :root{

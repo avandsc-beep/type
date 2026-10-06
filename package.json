@@ -1,11 +1,12 @@
 {
   "name": "avand-type",
-  "version": "25.0.0",
+  "version": "26.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "agregar": "node scripts/agregar-fuente.mjs"
   },
   "engines": {
     "node": ">=18.18.0"
@@ -16,5 +17,9 @@
     "next": "15.5.7",
     "react": "19.1.0",
     "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "fontkit": "^2.0.4",
+    "wawoff2": "^2.0.1"
   }
 }
