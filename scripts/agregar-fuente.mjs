@@ -183,6 +183,12 @@ async function main() {
     fs.writeFileSync(path.join(FONTS_DIR, dlName), buf)
     const woff2 = Buffer.from(await wawoff2.compress(buf))
     fs.writeFileSync(path.join(WEB_DIR, `${webBase}.woff2`), woff2)
+    // comprobación: la versión para pantalla debe poder abrirse y tener los mismos glifos
+    try {
+      if (readFont(woff2).characterSet.length !== font.characterSet.length) console.log('  • Aviso: el .woff2 no tiene los mismos caracteres que el original.')
+    } catch (e) {
+      console.log(`  ✗ El .woff2 generado no se puede abrir (${e.message}). La fuente no se verá en el sitio.`)
+    }
 
     data.push({
       id: nextId,
@@ -214,7 +220,7 @@ async function main() {
     console.log(`\nListo: ${added.length} fuente(s) agregada(s).`)
     const sinAutor = added.filter((a) => !a.authors.length)
     if (sinAutor.length) console.log(`Sin autor en los metadatos: ${sinAutor.map((a) => a.name).join(', ')}. Puedes completarlo en data/fonts.json (campo "authors").`)
-    console.log('Para verla: npm run dev   ·   Para publicar: sube el proyecto como siempre.')
+    console.log('Para verla: npm run dev   ·   Para comprobar todo el archivo: npm run verificar')
   }
 }
 

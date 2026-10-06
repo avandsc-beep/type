@@ -1,12 +1,13 @@
 {
   "name": "avand-type",
-  "version": "26.0.0",
+  "version": "27.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "agregar": "node scripts/agregar-fuente.mjs"
+    "agregar": "node scripts/agregar-fuente.mjs",
+    "verificar": "node scripts/verificar.mjs"
   },
   "engines": {
     "node": ">=18.18.0"

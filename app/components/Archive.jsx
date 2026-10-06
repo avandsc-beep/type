@@ -7,7 +7,7 @@ import LetterSpecimen from './LetterSpecimen'
 import Slider from './Slider'
 
 function FontCard({ font, index, sample }) {
-  const { openTester, counts, track } = useLab()
+  const { openTester, counts, track, failed } = useLab()
   const [size, setSize] = useState(index === 0 ? 145 : 105)
   const [tracking, setTracking] = useState(-2)
   const [leading, setLeading] = useState(0.86)
@@ -32,6 +32,9 @@ function FontCard({ font, index, sample }) {
         <LetterSpecimen family={font.family} text={text} size={size} tracking={tracking} leading={leading} />
       </div>
 
+      {failed.has(font.id) && (
+        <p className="card-warn is-error" role="alert">No se pudo cargar esta tipografía: el texto se ve con otra letra de reemplazo. Revisa que exista {font.web}</p>
+      )}
       {missing.length > 0 && (
         <p className="card-warn">Esta fuente no incluye: {missing.join(' ')}</p>
       )}

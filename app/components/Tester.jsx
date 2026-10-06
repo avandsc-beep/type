@@ -9,7 +9,7 @@ const PANGRAM = 'El veloz murciélago hindú comía feliz cardillo y kiwi.'
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ\nabcdefghijklmnopqrstuvwxyz'
 
 export default function Tester() {
-  const { selected, text, setText, pick, counts, track } = useLab()
+  const { selected, text, setText, pick, counts, track, failed } = useLab()
   const [size, setSize] = useState(150)
   const [tracking, setTracking] = useState(-2)
   const [leading, setLeading] = useState(0.86)
@@ -101,6 +101,9 @@ export default function Tester() {
         {text}
       </div>
 
+      {failed.has(selected.id) && (
+        <p className="card-warn is-error" role="alert">No se pudo cargar {selected.name}: se muestra con otra letra de reemplazo. Revisa que exista {selected.web}</p>
+      )}
       {missing.length > 0 && (
         <p className="card-warn" role="status">
           {selected.name} no incluye: {missing.join(' ')}. Esos caracteres se ven con otra tipografía.

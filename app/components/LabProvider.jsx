@@ -18,6 +18,7 @@ export default function LabProvider({ children }) {
   const [selected, setSelected] = useState(fonts[0])
   const [text, setText] = useState(DEFAULT_TEXT)
   const [counts, setCounts] = useState(null) // null = cargando
+  const [failed, setFailed] = useState(() => new Set()) // ids de fuentes que el navegador no pudo cargar
 
   // Cambiar de fuente conserva lo que la persona escribió; solo reemplaza el texto
   // si todavía es el de ejemplo (el título por defecto o el nombre de otra fuente).
@@ -34,6 +35,19 @@ export default function LabProvider({ children }) {
     pick(font, nextText)
     document.getElementById('experiment')?.scrollIntoView({ behavior: 'auto' })
   }, [pick])
+
+  // Si el archivo de una tipografía falta o es inválido, el navegador la reemplaza en silencio por otra.
+  // Aquí se detecta para avisarlo en la tarjeta en vez de dejar un texto con otra letra sin explicación.
+  useEffect(() => {
+    if (!document.fonts?.load) return
+    let alive = true
+    fonts.forEach((f) => {
+      document.fonts.load(`40px '${f.family}'`, 'Aa').catch(() => {
+        if (alive) setFailed((prev) => new Set(prev).add(f.id))
+      })
+    })
+    return () => { alive = false }
+  }, [])
 
   // Una sola petición trae los conteos de todas las fuentes.
   useEffect(() => {
@@ -63,8 +77,8 @@ export default function LabProvider({ children }) {
   }, [])
 
   const value = useMemo(
-    () => ({ selected, text, setText, pick, openTester, counts, track }),
-    [selected, text, pick, openTester, counts, track]
+    () => ({ selected, text, setText, pick, openTester, counts, track, failed }),
+    [selected, text, pick, openTester, counts, track, failed]
   )
 
   return <LabContext.Provider value={value}>{children}</LabContext.Provider>

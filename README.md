@@ -1,4 +1,4 @@
-# AVAND / TYPE v26
+# AVAND / TYPE v27
 
 Archivo tipográfico de AVAND: probar, descargar y usar tipografías abiertas, y vitrina de Cruz Santa (licencia comercial en MyFonts).
 El espacio se presenta como **"A letra suelta — Un espacio para pensar y construir letras."**
@@ -25,6 +25,12 @@ Te pregunta únicamente lo que no puede saber: **tipo** (Display, Experimental, 
 Para no responder preguntas: `--yes --tipo=Display --nota="..." --nombre="..." --anio=2024 --autor="A; B"`.
 
 Si el archivo no trae autor en sus metadatos, la ficha se crea sin autor (no se muestra nada) y puedes completarlo en `data/fonts.json`, campo `"authors"`.
+
+## Si una tipografía no se ve
+1. Ejecuta **`npm run verificar`**: revisa todas las fichas y dice exactamente qué falta (archivo para descargar, `.woff2` para pantalla, archivo dañado, campos vacíos o repetidos).
+2. Si el sitio no puede cargar una fuente, la tarjeta muestra un aviso visible con la ruta del archivo que busca (en vez de mostrar otra letra sin explicar).
+3. Después de agregar o cambiar archivos, **reinicia** `npm run dev` y recarga la página con Ctrl + F5 (así no queda una versión vieja en el navegador).
+4. Si publicas el sitio, recuerda volver a subirlo con los archivos nuevos de `public/fonts/` y `data/fonts.json`.
 
 ## Corregir o editar una ficha
 Todo está en **`data/fonts.json`**: nombre, tipo, año, autores, nota. Se edita a mano; no hay que tocar código ni CSS (los `@font-face` se generan solos).

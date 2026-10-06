@@ -73,6 +73,7 @@ section[id]{scroll-margin-top:52px}
 .card-top b{color:var(--ink);font-weight:400}
 .specimen-frame{position:relative;width:100%;overflow:hidden}
 .card-warn{padding:4px 0 0;font-size:var(--fs-label);color:var(--muted)}
+.card-warn.is-error{color:var(--ink);font-weight:700}
 .card-bottom{padding-top:6px}
 .card-actions{display:flex;gap:20px}
 .card-actions button,.card-actions a{padding:4px 0;border:0;border-bottom:1px solid currentColor;background:none;color:var(--ink);font-size:var(--fs-label);letter-spacing:.06em}

@@ -211,7 +211,9 @@
     "web": "/fonts/web/palace-palace-font.woff2",
     "type": "Display",
     "year": "2024",
-    "authors": [],
+    "authors": [
+      "Ayelen Antelo"
+    ],
     "note": "Display de proporciones anchas; las minúsculas son versalitas.",
     "glyphs": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ÁÉÍÓÚÑÜáéíóúñü¿¡.,:;!?()\"'-–—/&@#%+*=$€",
     "charset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢¤¥¦§¨©ª«¬®¯°±²³´¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïñòóôõö÷ùúûüýÿĀāĆćĈĉĊċČčĎďĐĒēĖėĚěĜĝĠġģĤĥĨĩĪīİĴĵĹĺŃńŇňŉŌōŐőŔŕŘřŚśŜŝŞşŠšŤŨũŪūŮůŰűŴŵŶŷŸŹźŻżŽžȘˆˇ˙˚˛˜˝ΔμπẀẁẂẃẄẅ–—‘’‚“”„†‡•…‰‹›⁄₣€™∏∑−∕∙√∞∫≈≠≤≥◊"
@@ -224,7 +226,9 @@
     "web": "/fonts/web/tiendita.woff2",
     "type": "Display",
     "year": "2024",
-    "authors": [],
+    "authors": [
+      "Leo Abru"
+    ],
     "note": "Display de trazo grueso con borde irregular, como recortado.",
     "glyphs": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ÁÉÍÓÚÑÜáéíóúñü¿¡.,:;!?()\"'-–—/&@#%+*=$€",
     "charset": "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡¢¤¥¦§¨©ª«¬®¯°±²³´¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïñòóôõö÷øùúûüýþÿĀāĂăĆćĈĉĊċČčĎďĐđĒēĔĕĖėĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŤťŦŧŨũŪūŬŭŮůŰűŴŵŶŷŸŹźŻżŽžȘșȚțˆˇˉ˘˙˚˜˝̦ΩμẀẁẂẃẄẅ–—‘’‚“”„†•…‰‹›⁄₧€™−∕∙√∞∫≈≠≤≥◊"
