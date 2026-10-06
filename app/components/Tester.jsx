@@ -1,7 +1,7 @@
 'use client'
 
 import { useMemo, useRef, useState } from 'react'
-import { fonts, missingChars } from '../../lib/fonts'
+import { fonts, missingChars, credit } from '../../lib/fonts'
 import { useLab } from './LabProvider'
 import Slider from './Slider'
 
@@ -18,6 +18,7 @@ export default function Tester() {
   const missing = useMemo(() => missingChars(text, selected), [text, selected])
   const hasDigits = selected.glyphs.includes('0')
   const count = counts === null ? '—' : counts[selected.id] ?? 0
+  const by = credit(selected.authors)
 
   const presets = [
     { label: 'NOMBRE', value: selected.name },
@@ -106,6 +107,14 @@ export default function Tester() {
         </p>
       )}
 
+      <dl className="specs">
+        <div><dt>AÑO</dt><dd>{selected.year}</dd></div>
+        {by && <div><dt>{selected.authors.length > 1 ? 'AUTORES' : 'AUTOR'}</dt><dd>{by}</dd></div>}
+        <div><dt>TIPO</dt><dd>{selected.type}</dd></div>
+        <div><dt>CARACTERES</dt><dd>{selected.glyphs.length}</dd></div>
+        <div><dt>DESCARGAS</dt><dd>{count}</dd></div>
+      </dl>
+
       <div className="glyphs-block">
         <h3 className="glyphs-title">CARACTERES ({selected.glyphs.length})</h3>
         <ul className="glyphs" style={{ fontFamily: `'${selected.family}', sans-serif` }}>
@@ -120,7 +129,7 @@ export default function Tester() {
       </div>
 
       <div className="experiment-footer">
-        <span>{selected.note} {count} descargas.</span>
+        <span>{selected.note}</span>
         <a className="download-button" href={selected.file} download onClick={() => track(selected)} data-cursor="DESCARGAR">
           DESCARGAR {selected.name} ↓
         </a>

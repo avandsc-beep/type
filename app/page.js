@@ -49,7 +49,7 @@ export default function Home() {
 
           <article className="font-card paid-card">
             <div className="card-top">
-              <h3><b>013</b> / CRUZ SANTA</h3>
+              <h3><b>{String(fonts.length + 1).padStart(3, '0')}</b> / CRUZ SANTA</h3>
               <span>LICENCIA COMERCIAL</span>
             </div>
             <div className="specimen-frame paid-specimen">
@@ -58,7 +58,7 @@ export default function Home() {
             <div className="paid-info">
               <div>
                 <strong>CRUZ SANTA</strong>
-                <span>por AVAND · 1 estilo · desde US$ 5</span>
+                <span>2024 · por Marco Antonio Ramirez Murga · 1 estilo · desde US$ 5</span>
               </div>
               <a href={MYFONTS_URL} target="_blank" rel="noopener noreferrer" data-cursor="MYFONTS">
                 COMPRAR EN MYFONTS<span className="sr-only"> (se abre en otra pestaña)</span> ↗

@@ -1,4 +1,4 @@
-# AVAND / TYPE v22
+# AVAND / TYPE v23
 
 Archivo tipográfico de AVAND: probar, descargar y usar tipografías abiertas, y vitrina de Cruz Santa (licencia comercial en MyFonts).
 
@@ -21,7 +21,8 @@ Variables opcionales (ver `.env.example`): `COUNTERAPI_WORKSPACE`, `COUNTERAPI_A
 1. Copia el archivo original a `public/fonts/`.
 2. Genera su `.woff2` en `public/fonts/web/` (por ejemplo con `pyftsubset` o `fonttools`).
 3. Agrega su `@font-face` en `app/globals.css`.
-4. Agrega la entrada en `lib/fonts.js` con un `id` nuevo (`013`, …). `glyphs` y `charset` se obtienen leyendo el cmap de la fuente.
+4. Agrega la entrada en `lib/fonts.js` con un `id` nuevo (el siguiente número libre). Además de nombre, tipo y nota, completa **`year`** y **`authors`** (lista de nombres; `[]` si aún no se conoce, y entonces no se muestra). `glyphs` y `charset` se obtienen leyendo el cmap de la fuente.
+5. Tip: el año y el autor suelen estar en los metadatos del archivo (`fonttools`: tablas `head` y `name`).
 
 ## Cruz Santa
 Solo se muestra una vista previa: el sitio carga un `.woff2` reducido con las letras de "CRUZ SANTA" y "TAMBIÉN ES HACER.". El archivo completo de la fuente **no** está en `public/`, para que no se pueda descargar desde el sitio.

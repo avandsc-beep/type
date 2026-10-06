@@ -1,6 +1,6 @@
 {
   "name": "avand-type",
-  "version": "22.0.0",
+  "version": "23.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -1,7 +1,7 @@
 'use client'
 
 import { useId, useState } from 'react'
-import { fonts, FONT_TYPES, missingChars } from '../../lib/fonts'
+import { fonts, FONT_TYPES, missingChars, credit } from '../../lib/fonts'
 import { useLab } from './LabProvider'
 import LetterSpecimen from './LetterSpecimen'
 import Slider from './Slider'
@@ -15,6 +15,7 @@ function FontCard({ font, index, sample }) {
   const text = sample.trim() ? sample : font.name
   const missing = missingChars(text, font)
   const count = counts === null ? '—' : counts[font.id] ?? 0
+  const by = credit(font.authors)
 
   return (
     <article className={`font-card${index === 0 ? ' is-primary' : ''}`}>
@@ -42,7 +43,7 @@ function FontCard({ font, index, sample }) {
       </div>
 
       <div className="card-bottom">
-        <span>{font.year} · USO ABIERTO · {count} DESCARGAS</span>
+        <span>{font.year}{by && <> · POR {by}</>} · USO ABIERTO · {count} DESCARGAS</span>
         <span className="card-actions">
           <button type="button" onClick={() => openTester(font, sample.trim() ? sample : undefined)} data-cursor="PROBAR">
             PROBAR<span className="sr-only"> {font.name}</span>
