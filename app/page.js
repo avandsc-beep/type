@@ -32,10 +32,10 @@ export default function Home() {
           <div className="archive-intro">
             <div className="archive-title">
               <span>AVAND / TYPE</span>
-              <h1 id="archive-title">LETRAS<br />PARA<br />USAR.</h1>
+              <h1 id="archive-title">A<br />letra<br />suelta</h1>
             </div>
             <div className="archive-manifest">
-              <p>Tipografías de AVAND. Abiertas para experimentar, utilizar y transformar.</p>
+              <p>Un espacio para pensar y construir letras.</p>
               <small className="hover-only">PASA EL CURSOR SOBRE LA LÍNEA.</small>
             </div>
           </div>

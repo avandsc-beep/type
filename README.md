@@ -1,6 +1,7 @@
-# AVAND / TYPE v23
+# AVAND / TYPE v25
 
 Archivo tipográfico de AVAND: probar, descargar y usar tipografías abiertas, y vitrina de Cruz Santa (licencia comercial en MyFonts).
+El espacio se presenta como **"A letra suelta — Un espacio para pensar y construir letras."**
 
 ## Correr el proyecto
 ```bash
@@ -11,9 +12,9 @@ npm run build && npm start
 Variables opcionales (ver `.env.example`): `COUNTERAPI_WORKSPACE`, `COUNTERAPI_ACCESS_TOKEN`.
 
 ## Estructura
-- `lib/fonts.js` — **fuente única de datos**: lista de tipografías, caracteres que incluye cada una y URLs. Lo usan la página, el probador y la API.
+- `lib/fonts.js` — **fuente única de datos**: lista de tipografías (nombre, tipo, año, autores, nota), caracteres que incluye cada una y URLs. Lo usan la página, el probador y la API.
 - `app/page.js` — página (componente de servidor).
-- `app/components/` — `Archive` (tarjetas, filtros y texto global), `Tester` (probador y glifos), `LabProvider` (estado compartido y descargas), `Cursor`, `LetterSpecimen`, `Slider`.
+- `app/components/` — `Archive` (tarjetas, filtros y texto global), `Tester` (probador, ficha y glifos), `LabProvider` (estado compartido y descargas), `Cursor`, `LetterSpecimen`, `Slider`.
 - `app/api/download/route.js` — contador de descargas (CounterAPI).
 - `public/fonts/` — archivos originales (los que se descargan). `public/fonts/web/` — `.woff2` livianos solo para mostrar en pantalla.
 
